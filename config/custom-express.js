@@ -4,11 +4,11 @@ var bodyParser = require('body-parser');
 var expressValidator = require('express-validator');
 var morgan = require('morgan');
 var logger = require('../servicos/logger.js');
+var cors = require('cors')
 
 module.exports = function(){
   var app = express();
-
-  app.use(morgan("common", {
+    app.use(morgan("common", {
     stream: {
       write: function(mensagem){
           logger.info(mensagem);
@@ -16,10 +16,29 @@ module.exports = function(){
     }
   }));
 
+  app.set('secret', 'your secret phrase here');
+  const corsOptions = {
+    exposedHeaders: ['x-access-token']
+  };
+
   app.use(bodyParser.urlencoded({extended: true}));
+  app.use(cors(corsOptions));
   app.use(bodyParser.json());
 
   app.use(expressValidator());
+
+  app.use((req, res, next) => {
+    const token = req.headers['x-access-token'];
+    console.log('####################################');
+    if(token) {
+        console.log('A token is send by the application');
+        console.log('Token value is ' + token);
+    } else {
+        console.log('No token is send by the the application');
+    }
+    console.log('####################################');
+    next();
+});
 
   consign()
    .include('controllers')
