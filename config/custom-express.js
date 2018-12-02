@@ -17,9 +17,18 @@ module.exports = function(){
   }));
 
   app.set('secret', 'your secret phrase here');
-  const corsOptions = {
-    exposedHeaders: ['x-access-token']
-  };
+
+var whitelist = ['https://traceview-angular.azurewebsites.net', 'http://localhost:4200']
+var corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  },
+  exposedHeaders: ['x-access-token']
+} 
 
   app.use(bodyParser.urlencoded({extended: true}));
   app.use(cors(corsOptions));
