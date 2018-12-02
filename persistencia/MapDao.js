@@ -2,8 +2,12 @@ function MapDao(connection) {
     this._connection = connection;
 }
 
-MapDao.prototype.salva = function(map,callback) {
-    this._connection.query('INSERT INTO maps SET ?', map, callback);
+MapDao.prototype.salva = function(map,callback) {    
+    this._connection.query('INSERT INTO maps (lat, lng) values ( ? , ? )',
+                                                [
+                                                    map.latitude,
+                                                    map.longitude
+                                                ], callback);
 }
 
 MapDao.prototype.atualiza = function(map,callback) {

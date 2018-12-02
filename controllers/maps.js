@@ -3,27 +3,44 @@ var logger = require('../servicos/logger.js');
 module.exports = function(app){
   app.get('/maps', function(req, res){
     console.log('Recebida requisicao de teste na porta 3000.')
-    res.send('OK.');
+    res.send('OK.');    
   });
 
-  app.get('/maps/map/:id', function(req, res){
-    var id = req.params.id;
-    console.log('consultando rota: ' + id);
-
-    logger.info('consultando rota: ' + id);    
-
+  app.get('/maps/users', function(req, res){
+    
     var connection = app.persistencia.connectionFactory();
     var mapDao = new app.persistencia.MapDao(connection);
 
-    mapDao.buscaPorId(id, function(erro, resultado){
+    mapDao.lista(function(erro, resultado){
       if(erro){
         console.log('erro ao consultar no banco: ' + erro);
         res.status(500).send(erro);
         return;
       }
-      console.log('rota encontrada: ' + JSON.stringify(resultado));
+      console.log('localizações encontrados: ' + JSON.stringify(resultado));
       res.json(resultado);
       return;
+    });
+  });
+
+  app.post('/maps/location', function(req, res){
+    const map = req.body; 
+
+    var connection = app.persistencia.connectionFactory();
+    var mapDao = new app.persistencia.MapDao(connection);
+    
+    mapDao.salva(map, function(erro, resMap){      
+      if(erro){
+        console.log('erro ao consultar no banco: ' + erro);
+        res.status(500).send(erro);
+        return;
+      }
+      
+        if(resMap) {    
+            return res.json(resMap);
+        } else {
+            res.status(401).json({ message: `não foi possivel cadastrar localizacao ${json.stringify(resMap)}`});  
+        }      
     });
   });
 
