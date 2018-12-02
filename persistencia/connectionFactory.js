@@ -1,18 +1,25 @@
 var mysql  = require('mysql');
 
 var db_config = {
+	host: 'traceview.mysql.database.azure.com',
+	user: 'traceadmin@traceview',
+	password: '@Traceview@',
+	database: 'traceview'
+};
+/*
+var db_config = {
 	host: 'us-cdbr-iron-east-01.cleardb.net',
 	user: 'bd3826c3135d5b',
 	password: '2c01fb8a',
 	database: 'heroku_976b0daff2b760e'
-};
+};*/
 
 function createDBConnection(){
 		return mysql.createConnection(db_config);
 }
 
 module.exports = function() {
-	return handleDisconnect;
+	return createDBConnection;
 }
 var connection;
 
